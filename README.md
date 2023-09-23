@@ -8,8 +8,8 @@ Puedes utilizar estos *checksum* para verificar que la descarga no ha sido alter
 
 | NOMBRE DE ARCHIVO       | SHA256                                                           | MD5                              |
 |-------------------------|------------------------------------------------------------------|----------------------------------|
-| [Quick_Video_Fetcher.ahk](https://github.com/mautech05/quick-video-fetcher/blob/main/Quick_Video_Fetcher.ahk) | 9af76c1d4b3891a1ddf22100a1b45a6642d571a92290034bf7546b9d4153d545 | cda1c2532665a28d602b4f1e6839ca4a |
-| [quickvf_release.zip](https://github.com/mautech05/quick-video-fetcher/releases)     | df93063e4ddc4b402e8df96414deb76d5fb5ed920088dd6e4d6611289941ee77 | 649ca28f15fc89959c752d0662abddfa |
+| [Quick_Video_Fetcher.ahk](https://github.com/mautech05/quick-video-fetcher/blob/main/Quick_Video_Fetcher.ahk) | 223fc54f76164be125766d5a0b33199ce6c8188998ea28a07280dab60a675a08 | 9e285c1f6bc9dd9866e083a3fb71b9e3 |
+| [quickvf_release.zip](https://github.com/mautech05/quick-video-fetcher/releases)     | ff3a4b5fccdf360743fc9ae57711d5d4dd4197ac6c4868a48f79b80511786f72 | 744c9a3d7ad4da4cf8b814d80200776f |
 
 ## Instalación
 ⚠️⚠️Es importante mencionar que este programa **requiere** del uso de **AutoHotKey v2** para funcionar. No obstante, también ofrecemos una versión ya compilada para aquellos que no desean o no pueden instalar AutoHotKey. Dicha versión compilada [no está firmada digitalmente](https://www.redeszone.net/2018/04/21/comprobar-firmas-digitales-programas-windows/) (la licencia cuesta casi 500 euros) por lo que Windows tratará de evitar su ejecución.

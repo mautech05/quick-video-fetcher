@@ -16,8 +16,8 @@ global title_path := temporal_dir "quickVF_title.txt"
 global check_dl_option := temporal_dir "quickVF_option.txt"
 global download_path := ""
 global script_icon := buttons_dir "QuickVideoFetcher.ico"
-global U_version := "0.1.0.0" ;Tiene que ser en formato X.X.X.X para evitar problemas con el AutoUpdater
-;@Ahk2Exe-SetVersion 0.1.0.0
+global U_version := "0.1.0.1" ;Tiene que ser en formato X.X.X.X para evitar problemas con el AutoUpdater
+;@Ahk2Exe-SetVersion 0.1.0.1
 ;@Ahk2Exe-SetName Quick Video Fetcher
 ;@Ahk2Exe-SetDescription Herramienta para descargar videos de internet
 ;@Ahk2Exe-SetCompanyName MauTech05
@@ -194,19 +194,22 @@ botonDescargarURL := quickVF_GUI.Add("Picture", "xs ys+195 w-1 h25", buttons_dir
 	botonDescargarURL.OnEvent("Click", DownloadURL)
 
 ;Ocultar controles
-botonAnalizandoURL.Visible := false
-seccionDescarga.Visible := false
-opcionDescarga.Visible := false
-seccionResolucion.Visible := false
-videoResolucion.Visible := false
-seccionFormatoV.Visible := false
-videoFormato.Visible := false
-seccionFormatoA.Visible := false
-audioFormato.Visible := false
-inputUbicacion.Visible := false
-botonUbicacion.Visible := false
-aclaracionDescarga.Visible := false
-botonDescargarURL.Visible := false
+HideControls(*) {
+	botonAnalizandoURL.Visible := false
+	seccionDescarga.Visible := false
+	opcionDescarga.Visible := false
+	seccionResolucion.Visible := false
+	videoResolucion.Visible := false
+	seccionFormatoV.Visible := false
+	videoFormato.Visible := false
+	seccionFormatoA.Visible := false
+	audioFormato.Visible := false
+	inputUbicacion.Visible := false
+	botonUbicacion.Visible := false
+	aclaracionDescarga.Visible := false
+	botonDescargarURL.Visible := false
+}
+HideControls()
 
 ;========== PLATAFORMAS SOPORTADAS ==========
 VFtabs.UseTab(2)
@@ -227,11 +230,12 @@ quickVF_GUI.Add("Text", "xs+10 ys+210", "Twitch")
 quickVF_GUI.Add("Text", "xs+60 ys+260", "Prueba con otras plataformas, ¡Quizás tengas suerte!")
 
 quickVF_GUI.SetFont("s9 w400 c5f656d", "Open Sans")
+quickVF_GUI.Add("Text", "xs+10 ys+280", "Si no puedes abrir los enlaces (resaltados en azúl) presiona la tecla ENTER")
 quickVF_GUI.Add("Text", "xs+80 ys+20 w330 r1", "https://www.youtube.com/watch?v=ABCDE123456")
 quickVF_GUI.Add("Text", "xs+80 ys+40 w330 r1", "https://youtu.be/ABCDE123456")
 quickVF_GUI.Add("Text", "xs+80 ys+70 w330 r1", "https://www.tiktok.com/@usuario/video/1234567890123456789")
 quickVF_GUI.Add("Text", "xs+80 ys+90 w330 r1", "https://vm.tiktok.com/ABCDE1234/")
-quickVF_GUI.Add("Text", "xs+80 ys+120 w330 r1", "https://fb.watch/ABCDE12345/")
+quickVF_GUI.Add("Link", "xs+80 ys+120 w330 r1", '<a href="https://github.com/yt-dlp/yt-dlp/issues/7901">NO DISPONIBLE POR AHORA</a> https://fb.watch/ABCDE12345/')
 quickVF_GUI.Add("Text", "xs+80 ys+150 w330 r1", "https://www.reddit.com/r/comunidad/comments/ABCD123/usuario/")
 quickVF_GUI.Add("Text", "xs+80 ys+180 w330 r1", "https://www.instagram.com/reel/ABCDEF12345/")
 quickVF_GUI.Add("Text", "xs+80 ys+210 w330 r1", "https://www.twitch.tv/videos/1234567890")
@@ -256,6 +260,7 @@ quickVF_GUI.Add("Link", "xs+10 ys+180 w400", 'Ícono «Folder» creado por Freep
 quickVF_GUI.SetFont("s9 w400 c5f656d", "Open Sans")
 quickVF_GUI.Add("Text", "xs+30 ys+105 w390 r1", "Utilizado para descargar los videos desde las diferentes plataformas.")
 quickVF_GUI.Add("Text", "xs+30 ys+150 w390 r2", "Utilizado para convertir los videos en caso de que tengan un formato o tipo de descarga incorrecto.")
+quickVF_GUI.Add("Text", "xs+10 ys+280", "Si no puedes abrir los enlaces (resaltados en azúl) presiona la tecla ENTER")
 
 
 quickVF_GUI.Show("w456 h400")
@@ -441,7 +446,7 @@ AnalyzeURL(*) {
 	botonAnalizandoURL.Visible := true
 
 	;Obtener metadatos
-	title_command := Format("yt-dlp --print filename --output {1}%(title)s{2} {1}{3}{2} --restrict-filenames > {1}{4}{2}", '"', '"', URL, title_path)
+	title_command := Format("yt-dlp --print filename --output {1}%(title)s{2} {1}{3}{2} > {1}{4}{2}", '"', '"', URL, title_path)
 	RunWait A_ComSpec " /c " title_command, libraries_dir, "Hide"
 	global url_title := FileRead(title_path)
 
@@ -449,6 +454,12 @@ AnalyzeURL(*) {
 	ControlSetText url_title, outputTitulo.hwnd
 	botonAnalizarURL.Visible := true
 	botonAnalizandoURL.Visible := false
+		;Error si no se pudo obtener metadatos
+		if url_title = "" {
+			MsgBox "No podemos continuar. Es posible que el video haya sido eliminado o esté marcado como privado. Si el problema persiste y se trata de una plataforma soportada, revisa la pestaña de Plataformas Soportadas para conocer su estatus.", "Quick Video Fetcher", "Iconx"
+			HideControls()
+			return
+		}
 
 	;Mostrar controles
 	seccionDescarga.Visible := true
@@ -493,8 +504,28 @@ ChooseFormat(*) {
 	botonUbicacion.Visible := true
 }
 ChoosePath(*) {
+	;Asignar un nombre por sitio de origen
+	video_filename := SubStr(url_title, 1, 32)	;Default
+	if RegExMatch(URL, "tiktok") {	;TikTok
+		RegExMatch(URL, "\b(?:(?:\w{9})|(?:\d{19}))\b", &video_param1)
+		video_filename := "tiktok_" video_param1[0]
+	}
+	if RegExMatch(URL, "\b(?:youtube|youtu\.be)\b") {	;YouTube
+		RegExMatch(URL, "[0-9a-zA-Z_-]{11}", &video_param1)
+		video_filename := "youtube_" video_param1[0]
+	}
+	if RegExMatch(URL, "reddit") {	;Reddit
+		RegExMatch(URL, "r\/([^\/]+)", &video_param1)
+		RegExMatch(URL, "comments\/([^\/]+)", &video_param2)
+		video_filename := "reddit_r" video_param1[1] "_" video_param2[1]
+	}
+	if RegExMatch(URL, "instagram") {	;Instagram
+		RegExMatch(URL, "[0-9a-zA-Z_-]{11}", &video_param1)
+		video_filename := "instagram_" video_param1[0]
+	}
+
 	;Seleccionar una ubicación de descarga
-	global download_path := FileSelect("S10", SubStr(url_title, 1, 16), "Guardar como", Format("Multimedia (*.{1})", download_format))
+	global download_path := FileSelect("S10", video_filename, "Guardar como", Format("Multimedia (*.{1})", download_format))
 	if download_path = "" {
 		MsgBox "Es necesario seleccionar una carpeta donde se guardarán los archivos descargados", "Quick Video Fetcher", "Iconx"
 		return
